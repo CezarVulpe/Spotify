@@ -1,7 +1,5 @@
 # Spotify
 
-#### Assignment Link: [https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/proiect/etapa1](https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/proiect/etapa3)
-
 
 ## Skel Structure
 
