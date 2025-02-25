@@ -16,7 +16,7 @@
 
 ### Core Features
 
-- The **Spotify** class implements all commands, taking input from `main` and storing results in an `ObjectNode`.
+- The **Admin** class implements all commands, taking input from `main` and storing results in an `ObjectNode`.
 - The **User** class keeps track of command status, last searches, selections, and navigation.
 - The **GetTop** class stores general statistics like liked songs and followed playlists.
 - **UserList** maintains a collection of all users.
