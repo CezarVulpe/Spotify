@@ -1,22 +1,57 @@
-# Spotify
+# Spotify Project Overview
 
+## Project Structure
 
-## Skel Structure
+- **src/**: Contains all source code files.
+  - **checker/**: Checker files.
+  - **fileio/**: Classes responsible for reading data from JSON files.
+  - **main/**:
+    - **Main**: Entry point for running the implementation.
+    - **Test**: Runs test cases and stores the output in `out.txt` for comparison.
+  - **implementareprogram/**: Contains all core classes used in the project.
+- **input/**: Test cases and JSON-formatted library.
+- **ref/**: Reference output for validation.
 
-* src/
-  * checker/ - checker files
-  * fileio/ - contains classes used to read data from the json files
-  * main/
-      * Main - the Main class runs the checker on your implementation. Add the entry point to your implementation in it. Run Main to test your implementation from the IDE or from command line.
-      * Test - run the main method from Test class with the name of the input file from the command line and the result will be written
-        to the out.txt file. Thus, you can compare this result with ref.
-* input/ - contains the tests and library in JSON format
-* ref/ - contains all reference output for the tests in JSON format
-* Am folosit scheletul de la etapa 2. Design patterns utilizate: Singleton, Visitor, Command si Observer
-* Pentru implementarea functiei de wrapped, la fiecare user am adaugat campuri de Hashmap uri ce aveau rolul de a numara cate play uri a dat acel user pentru fiecare cantec, album, etc. La mai toate hashmapurile tineam minte un string mai putin la cantec, episod si user. Pentru a numara numarul de playuri a trebuit sa modific functiile de simulatetime, next, prev si forward, functii ce pot schimba file ul curent din player. Pentru fiecare noua schimbare trebuia sa verific hashmapurile daca nu cumva contin acea cheie. Daca o contineau, adaugam la valoarea ei, daca nu, adaugam noua cheie si valoarea in hashmap Am procedat similar si pentru host si artist, dupa care, am creeat o clasa WrappedVisitor ce se ocupa de sortarea si afisarea topurilor de la final de program. Pentru a evita folosirea de instaceof la hashmapuri, a trebuit sa imi fac 4 functii de sortare pe care le-am salvat in clasa SortingClass si implementeaza design pattern ul Singleton(vreau sa am o singura instanta de sortare deoarece asa consider cac ar fi logic).
-* La sistemul de pagini am efectuat modificari la schelet pentru a tine minte a cui pagina este afisata si ce fel de pagina este. Astfel, la cumpararea de merch de catre un user, mi a fost foarte usor sa vad a carui artist este acea pagina pentru a verifica si cumpara acel merch.
-* Pentru monetizarea premium a trebuit sa tin minte in 2 hashmapuri cate ascultari a avut fiecare artist de la acel user si pentru a tine minte cate ascultari a avut fiecare melodie. Astfel mi a fost usor sa calculez venitul pentru fiecare artist, dupa care parcurgeam fiecare cantec si actualizam campul de cantece cu revenue de la artist.
-* La monetizarea free aveam un camp de hashmap cu cantece ascultate cat timp utilizatorul nu era premium pentru a putea face calculul pentru reclame. Am tinut cont de faptul ca o reclama poate sa nu se termine asa ca a trebit sa dau skip peste functia de next din updatetimestamp. 
-* In implementarea testelor de notificari am utilizat design pattern ul observer. Astfel, artistii si hostii sunt pe post de subiect ce au rolul de a adauga userii care se aboneaza si de a-i notifica. Userii devin observerii ce implementeaza o functie de update ce are rolul de a le actualiza campul de notificari. La afisarea de notificari, golesc campul acelui user de notificari. Pentru notificari am creat o clasa GetNotificationsVisitor pentru a putea creea noduri de json la fieacre tip de user abstract. 
-* La sistemul de navigare de pagini am implementat design pattern ul Command. Mi am creat o clasa numita Navigatro ce are rolul de a tine minte istoricul comenzilor si istorcul comenzilor in caz de nextpage. Am adaugat o interfata de command urmand sa implemnetez comenzi concrete ce o vor implementa. In interiorul clasei changepage(comanda) tin minte userul, pagina precedenta si pagina urmatoarea, iar in cazul in care se doreste a se schimba pagina, navigatorul este apelat pentru a incepe acea comanda si a schimba pagina actuala a userului. In navigator am functia de change ce joaca rolul comenzii de changepage, functia undo -- previous page si functia redo -- next page. Pentru functionalitatea de next page a trebuit doar sa actualizez noua pagina deaorece pagina precedenta si pagina urmatoare erau deja setate de comanda previous page
-* Pentru recomandari am o functie ce apeleaza functiile reprezentative pentru tipul de recomandare cerut. Adminul are rolul de a-mi oferi o lista cu cantecele de un anumit gen pe care eu dupa trebuie sa o prelucrez si sa selectez cu random(plasand seed ul bun). Am adaugat 2 campuri noi la user: recommended song si playlist pe care le verific daca sunt nule sau nu si le afisez in cazul in care se cere vizualizarea recomandarilor. Am adaugat implementarea fucntiei de load recommendations ce are rolul de a schimba audiocollection si currentaudiofile in player pentru a pute rula recomandarile.
+## Functionality
+
+### Core Features
+
+- The **Spotify** class implements all commands, taking input from `main` and storing results in an `ObjectNode`.
+- The **User** class keeps track of command status, last searches, selections, and navigation.
+- The **GetTop** class stores general statistics like liked songs and followed playlists.
+- **UserList** maintains a collection of all users.
+
+### Command Implementations
+
+- **Search**: Uses a specialized class to filter audio files based on search criteria.
+- **Select**: Stores the last selected audio file type and ensures valid selection based on previous searches.
+- **Load**: Updates user status, keeping track of playback conditions, shuffle state, and current file.
+- **Status**: Manages playback states (paused/playing) and simulates time passage for audio files, including **podcasts**.
+- **Playlists**: Stores visibility, followers count, shuffle seed, and indices. Follows a dynamic time simulation approach similar to songs.
+- **Navigation (Prev/Next)**: Tracks playback history and updates user state accordingly.
+
+### Design Patterns Used
+
+- **Singleton**: Used in sorting mechanisms to maintain a single instance.
+- **Visitor**: Implements functionality for displaying user pages dynamically.
+- **Command**: Handles navigation, storing previous and next pages for undo/redo actions.
+- **Observer**: Manages user subscriptions and notifications for artist/host activities.
+
+### Additional Features
+
+- **User Online/Offline Mode**: The admin skips time simulation for offline users.
+- **Album Implementation**: Extended from `AudioCollection`, requiring modifications to search and shuffle mechanisms.
+- **Artists & Hosts**: Added as subclasses of `User`, with `searchable` versions for filtering.
+- **Announcements, Events, and Merch**: Each artist/host maintains a list of these in a `userutils` package.
+- **Admin System**: Handles albums, podcasts, and user management dynamically.
+- **Delete Operations**:
+  - Removing a podcast ensures no active user is currently playing it.
+  - Deleting an album involves verifying dependencies on songs and playlists.
+  - User deletion updates followed playlists and resets associated pages for offline users.
+
+### Top Artists & Albums
+
+- **Top 5 Artists**: Ranked by total song likes, with lexicographic ordering for ties.
+- **Top Albums**: Ranked based on total likes of included songs.
+
+This implementation provides a robust simulation of a music streaming service with advanced state tracking, search capabilities, and structured data handling.
